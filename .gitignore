@@ -167,3 +167,6 @@ __MACOSX/
 
 # vscode
 .vscode/
+
+# ouputs
+crawler/output/
