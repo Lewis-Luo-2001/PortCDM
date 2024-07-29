@@ -1,9 +1,20 @@
+import pandas as pd
+
+from config import Config
 from utils.fetch import fetch_webpage
 from utils.extract import extract_port_data, extract_event_data
 from utils.save import save_to_csv, save_to_html
-import pandas as pd
 
-def main(url: str, output_csv_path: str, output_html_path: str, ship_content_id_prefix: str, cols: list[str], event_url: str, event_cols: str) -> None:
+def main(config: Config) -> None:
+    # Unpack the configuration
+    url = config.url
+    output_html_path = config.output_html_path
+    output_csv_path = config.output_csv_path
+    ship_content_id_prefix = config.ship_content_id_prefix
+    cols = config.cols
+    event_url = config.event_url
+    event_cols = config.event_cols
+
     # Fetch the webpage
     html = fetch_webpage(url)
     save_to_html(html, output_html_path)
@@ -42,5 +53,5 @@ def main(url: str, output_csv_path: str, output_html_path: str, ship_content_id_
 
 
 if __name__ == '__main__':
-    from config import url, output_html_path, output_csv_path, ship_content_id_prefix, cols, event_url, event_cols
-    main(url, output_csv_path, output_html_path, ship_content_id_prefix, cols, event_url, event_cols)
+    config = Config()
+    main(config)
