@@ -229,7 +229,8 @@ def main():
         rows = get_recent_ship_statuses(interval_time+1)
 
         for row in rows:
-            send_notifications(row, line_notify_tokens, original_token)
+            if "WAN HAI" in row['船名']:
+                send_notifications(row, line_notify_tokens, original_token)
 
         time.sleep(interval_time)
 
