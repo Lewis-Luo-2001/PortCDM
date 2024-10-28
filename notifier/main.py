@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import psycopg2
 import requests
 from psycopg2.extras import RealDictCursor
-from config import original_token, line_notify_tokens, notification_mapping, INOUT_PILOTAGE_EVENTS, BERTH_ORDER_EVENTS
+from config import original_token, line_notify_tokens, notification_mapping, INOUT_PILOTAGE_EVENTS, BERTH_ORDER_EVENTS, Get_berth_message_type
 
 def send_line_notify(message, token):
     url = 'https://notify-api.line.me/api/notify'
@@ -302,13 +302,20 @@ def combine_ship_and_berth(rows, ship_berth):
     for row in rows:
         for i in range(len(ship_berth)):
             if ship_berth[i]['ship_name_chinese'] in row["船名"]:
-                row.update({'碼頭代號': ship_berth[i]['berth_number'], '港代': ship_berth[i]['port_agent']})
+                row.update({'碼頭代號': ship_berth[i]['berth_number']})
+    return(rows)
+
+def combine_ship_and_port_agent(rows, ship_berth):
+    for row in rows:
+        for i in range(len(ship_berth)):
+            if ship_berth[i]['ship_name_chinese'] in row["船名"]:
+                row.update({'港代': ship_berth[i]['port_agent']})
     return(rows)
 
 def main():
     interval_time = int(os.getenv('INTERVAL_TIME', 180))
 
-    Get_berth_message_type=["引水人上船時間(進港)","引水人出發(進港)","船長報告ETA","實際靠妥時間","離開泊地時間","引水人上船時間(出港)"]
+    
 
     while True:
         print(f'{(datetime.now() + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")} 查看資料庫有無更新')
@@ -317,11 +324,12 @@ def main():
         rows.extend(get_recent_ship_statuses(interval))
         rows.extend(get_berth_and_previous_pilotage_time_updated(interval))
         check = False
+        ship_berth_and_port_agent = get_ship_berth_and_port_agent()
+        rows = combine_ship_and_port_agent(rows, ship_berth_and_port_agent)
         for row in rows:
             for event in Get_berth_message_type:
                 try:
                     if event in row['最新消息'] :
-                        ship_berth_and_port_agent = get_ship_berth_and_port_agent()
                         rows = combine_ship_and_berth(rows, ship_berth_and_port_agent)
                         check = True
                         break
