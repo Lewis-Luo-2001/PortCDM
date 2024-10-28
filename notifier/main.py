@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import psycopg2
 import requests
 from psycopg2.extras import RealDictCursor
-from config import original_token, line_notify_tokens, notification_mapping, INOUT_PILOTAGE_EVENTS, BERTH_ORDER_EVENTS, Get_berth_message_type
+from config import original_token, line_notify_tokens, notification_mapping, INOUT_PILOTAGE_EVENTS, BERTH_ORDER_EVENTS, Berth_message_type
 
 def send_line_notify(message, token):
     url = 'https://notify-api.line.me/api/notify'
@@ -327,7 +327,7 @@ def main():
         ship_berth_and_port_agent = get_ship_berth_and_port_agent()
         rows = combine_ship_and_port_agent(rows, ship_berth_and_port_agent)
         for row in rows:
-            for event in Get_berth_message_type:
+            for event in Berth_message_type:
                 try:
                     if event in row['最新消息'] :
                         rows = combine_ship_and_berth(rows, ship_berth_and_port_agent)
