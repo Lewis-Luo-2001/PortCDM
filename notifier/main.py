@@ -298,18 +298,18 @@ def get_ship_berth_and_port_agent():
                 
                 return [row for row in cur.fetchall()]
 
-def combine_ship_and_berth(rows, ship_berth):
+def combine_ship_and_berth(rows, ship_berths):
     for row in rows:
-        for i in range(len(ship_berth)):
-            if ship_berth[i]['ship_name_chinese'] in row["船名"]:
-                row.update({'碼頭代號': ship_berth[i]['berth_number']})
+        for ship_berth in ship_berths:
+            if ship_berth['ship_name_chinese'] in row["船名"]:
+                row.update({'碼頭代號': ship_berth['berth_number']})
     return(rows)
 
-def combine_ship_and_port_agent(rows, ship_berth):
+def combine_ship_and_port_agent(rows, ship_berths):
     for row in rows:
-        for i in range(len(ship_berth)):
-            if ship_berth[i]['ship_name_chinese'] in row["船名"]:
-                row.update({'港代': ship_berth[i]['port_agent']})
+        for ship_berth in ship_berths:
+            if ship_berth['ship_name_chinese'] in row["船名"]:
+                row.update({'港代': ship_berth['port_agent']})
     return(rows)
 
 def main():
