@@ -18,7 +18,7 @@ line_notify_tokens = {
     'PierLienHai': os.getenv('LINE_NOTIFY_TOKEN_PIER_LIEN_HAI'),
     'PierSelfOperated': os.getenv('LINE_NOTIFY_TOKEN_PIER_SELF_OPERATED')
 }
-Berth_message_type=["引水人上船時間 (進港)","引水人出發 (進港)","船長報告ETA","實際靠妥時間","離開泊地時間","引水人上船時間 (出港)"]
+berth_message_type_for_pier=["引水人上船時間 (進港)","引水人出發 (進港)","船長報告ETA","實際靠妥時間","離開泊地時間","引水人上船時間 (出港)"]
 ##########################################
 # Event mapping                          #
 ##########################################
