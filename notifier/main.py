@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import psycopg2
 import requests
 from psycopg2.extras import RealDictCursor
-from config import original_token, line_notify_tokens, notification_mapping, INOUT_PILOTAGE_EVENTS, BERTH_ORDER_EVENTS, Berth_message_type
+from config import original_token, line_notify_tokens, notification_mapping, INOUT_PILOTAGE_EVENTS, BERTH_ORDER_EVENTS, berth_message_type_for_pier
 
 def send_line_notify(message, token):
     url = 'https://notify-api.line.me/api/notify'
@@ -127,6 +127,30 @@ def get_berth_and_previous_pilotage_time_updated(interval):
 
             cur.execute(query, (interval_ago,))
             return [process_row_for_berth_order(row) for row in cur.fetchall()]
+
+def get_ship_berth_and_port_agent():
+    with get_db_connection() as conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+
+                query = '''
+                SELECT
+                    temp_table.berth_number,
+                    temp_table.port_agent,
+                    temp_table.ship_name_chinese
+                FROM (
+                    SELECT
+                        sbo.berth_number,
+                        sbo.port_agent,
+                        sbo.ship_name_chinese,
+                        sbo.updated_at,
+                        ROW_NUMBER() OVER(PARTITION BY sbo.ship_name_chinese ORDER BY sbo.updated_at DESC) AS rn
+                    FROM ship_berth_order sbo
+                ) AS temp_table
+                WHERE temp_table.rn = 1;
+                '''
+                cur.execute(query)
+                
+                return [row for row in cur.fetchall()]
 
 def process_row(row):
     latest_event = row['latest_event_name']
@@ -274,48 +298,20 @@ def send_notifications_for_berth_order(row, original_token):
         status = '成功' if response.status_code == 200 else '失敗'
         print(f'{(datetime.now() + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")} 通知發送{status}: {row["船名"]} - 事件: 碼頭{row["碼頭代號"]}-{row["觸發事件"]}')
 
-def get_ship_berth_and_port_agent():
-    with get_db_connection() as conn:
-        with conn.cursor(cursor_factory=RealDictCursor) as cur:
-
-                query = '''
-                SELECT
-                    temp_table.berth_number,
-                    temp_table.port_agent,
-                    temp_table.ship_name_chinese
-                FROM (
-                    SELECT
-                        sbo.berth_number,
-                        sbo.port_agent,
-                        sbo.ship_name_chinese,
-                        sbo.updated_at,
-                        ROW_NUMBER() OVER(PARTITION BY sbo.ship_name_chinese ORDER BY sbo.updated_at DESC) AS rn
-                    FROM ship_berth_order sbo
-                ) AS temp_table
-                WHERE temp_table.rn = 1;
-                '''
-                cur.execute(query)
+def combine_ship_and_berth_and_port_agent(rows):
+    ship_berths = get_ship_berth_and_port_agent()
+    
+    for row in rows:
+        for ship_berth in ship_berths:
+            if ship_berth['ship_name_chinese'] in row["船名"]:
+                if row['最新消息'] in berth_message_type_for_pier:
+                    row.update({'碼頭代號': ship_berth['berth_number']})
                 
-                return [row for row in cur.fetchall()]
-
-def combine_ship_and_berth(rows, ship_berths):
-    for row in rows:
-        for ship_berth in ship_berths:
-            if ship_berth['ship_name_chinese'] in row["船名"]:
-                row.update({'碼頭代號': ship_berth['berth_number']})
-    return(rows)
-
-def combine_ship_and_port_agent(rows, ship_berths):
-    for row in rows:
-        for ship_berth in ship_berths:
-            if ship_berth['ship_name_chinese'] in row["船名"]:
                 row.update({'港代': ship_berth['port_agent']})
     return(rows)
 
 def main():
     interval_time = int(os.getenv('INTERVAL_TIME', 180))
-
-    
 
     while True:
         print(f'{(datetime.now() + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")} 查看資料庫有無更新')
@@ -323,20 +319,7 @@ def main():
         rows = []
         rows.extend(get_recent_ship_statuses(interval))
         rows.extend(get_berth_and_previous_pilotage_time_updated(interval))
-        check = False
-        ship_berth_and_port_agent = get_ship_berth_and_port_agent()
-        rows = combine_ship_and_port_agent(rows, ship_berth_and_port_agent)
-        for row in rows:
-            for event in Berth_message_type:
-                try:
-                    if event in row['最新消息'] :
-                        rows = combine_ship_and_berth(rows, ship_berth_and_port_agent)
-                        check = True
-                        break
-                except:
-                    continue
-            if check:
-                break
+        rows = combine_ship_and_berth_and_port_agent(rows)
     
         for row in rows:
             try:
