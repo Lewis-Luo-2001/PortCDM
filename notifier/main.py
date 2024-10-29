@@ -237,10 +237,10 @@ ETD: {format_datetime(row['ETD'])}
 {format_datetime(row['更新時間']) if row['更新時間'] else "N/A"}"""
 
 def notification_filter(row, stakeholder) -> bool:
+    print(row)
     yang_ming_or_wan_hai = "陽明海運" in row["港代"] or "萬海航運公司" in row["港代"]
     pier_1042_1043 = row['碼頭代號'] in {'1042', '1043'}
     pier_1120_1121 = row['碼頭代號'] in {'1120', '1121'}
-    
     stakeholder_conditions = {
         'Pilot': yang_ming_or_wan_hai or pier_1042_1043 or pier_1120_1121,
         'CIQS': yang_ming_or_wan_hai or pier_1042_1043 or pier_1120_1121,
@@ -300,7 +300,6 @@ def send_notifications_for_berth_order(row, original_token):
 
 def combine_ship_and_berth_and_port_agent(rows):
     ship_berths = get_ship_berth_and_port_agent()
-    
     for row in rows:
         for ship_berth in ship_berths:
             if ship_berth['ship_name_chinese'] in row["船名"]:
@@ -308,6 +307,7 @@ def combine_ship_and_berth_and_port_agent(rows):
                     row.update({'碼頭代號': ship_berth['berth_number']})
                 
                 row.update({'港代': ship_berth['port_agent']})
+    
     return(rows)
 
 def main():
@@ -318,9 +318,8 @@ def main():
         interval = interval_time + 1
         rows = []
         rows.extend(get_recent_ship_statuses(interval))
-        rows.extend(get_berth_and_previous_pilotage_time_updated(interval))
         rows = combine_ship_and_berth_and_port_agent(rows)
-    
+        rows.extend(get_berth_and_previous_pilotage_time_updated(interval))
         for row in rows:
             try:
                 if row['訊息格式'] == '接靠順序':
