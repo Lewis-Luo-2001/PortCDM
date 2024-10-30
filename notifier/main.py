@@ -237,7 +237,6 @@ ETD: {format_datetime(row['ETD'])}
 {format_datetime(row['更新時間']) if row['更新時間'] else "N/A"}"""
 
 def notification_filter(row, stakeholder) -> bool:
-    print(row)
     yang_ming_or_wan_hai = "陽明海運" in row["港代"] or "萬海航運公司" in row["港代"]
     pier_1042_1043 = row['碼頭代號'] in {'1042', '1043'}
     pier_1120_1121 = row['碼頭代號'] in {'1120', '1121'}

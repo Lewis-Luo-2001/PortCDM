@@ -18,7 +18,7 @@ line_notify_tokens = {
     'PierLienHai': os.getenv('LINE_NOTIFY_TOKEN_PIER_LIEN_HAI'),
     'PierSelfOperated': os.getenv('LINE_NOTIFY_TOKEN_PIER_SELF_OPERATED')
 }
-berth_message_type_for_pier=["新增引水申請 (進港)","更新引水時間 (進港)","船長報告ETA", "引水人出發 (進港)","實際靠妥時間","離開泊地時間","新增引水申請 (出港)","更新引水時間 (出港)", "引水人出發 (出港)"]
+berth_message_type_for_pier=["新增引水申請 (進港)","更新引水時間 (進港)","船長報告ETA", "引水人出發 (進港)","實際靠妥時間","新增引水申請 (出港)","更新引水時間 (出港)", "引水人出發 (出港)"]
 ##########################################
 # Event mapping                          #
 ##########################################
@@ -28,7 +28,7 @@ berth_message_type_for_pier=["新增引水申請 (進港)","更新引水時間 (
 # "新增引水申請 (出港)", "更新引水時間 (出港)", "引水人上船時間 (出港)", "引水人排班 (出港)", "引水人出發 (出港)",
 # "離開泊地時間", "通過15浬時間", "通過10浬時間", "通過5浬時間"]
 # Recipients: ["Pilot", "CIQS", "Unmooring", "Tugboat", "ShippingAgentWanHai", "ShippingCompanyYangMing", "LoadingUnloading", "PierLienHai", "PierSelfOperated"]
-INOUT_PILOTAGE_EVENTS = ["新增引水申請", "更新引水時間", "引水人上船時間"]
+INOUT_PILOTAGE_EVENTS = ["新增引水申請", "更新引水時間", "引水人上船時間", "引水人出發"]
 BERTH_ORDER_EVENTS = ["通過10浬時間", "通過5浬時間"]
 
 notification_mapping: Dict[str, List[str]] = {
