@@ -299,6 +299,7 @@ def send_notifications_for_berth_order(row, original_token):
 
 def combine_ship_and_berth_and_port_agent(rows):
     ship_berths = get_ship_berth_and_port_agent()
+
     for row in rows:
         for ship_berth in ship_berths:
             if ship_berth['ship_name_chinese'] in row["船名"]:
@@ -306,7 +307,6 @@ def combine_ship_and_berth_and_port_agent(rows):
                     row.update({'碼頭代號': ship_berth['berth_number']})
                 
                 row.update({'港代': ship_berth['port_agent']})
-    
     return(rows)
 
 def main():
