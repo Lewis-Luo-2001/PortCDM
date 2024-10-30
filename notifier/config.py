@@ -28,7 +28,7 @@ berth_message_type_for_pier=["引水人上船時間 (進港)","引水人出發 (
 # "新增引水申請 (出港)", "更新引水時間 (出港)", "引水人上船時間 (出港)", "引水人排班 (出港)", "引水人出發 (出港)",
 # "離開泊地時間", "通過15浬時間", "通過10浬時間", "通過5浬時間"]
 # Recipients: ["Pilot", "CIQS", "Unmooring", "Tugboat", "ShippingAgentWanHai", "ShippingCompanyYangMing", "LoadingUnloading", "PierLienHai", "PierSelfOperated"]
-INOUT_PILOTAGE_EVENTS = ["新增引水申請", "更新引水時間", "引水人上船時間"]
+INOUT_PILOTAGE_EVENTS = ["新增引水申請", "更新引水時間", "引水人上船時間", "引水人出發", "引水人排班", "海巡署審核", "移民署審核"]
 BERTH_ORDER_EVENTS = ["通過10浬時間", "通過5浬時間"]
 
 notification_mapping: Dict[str, List[str]] = {
