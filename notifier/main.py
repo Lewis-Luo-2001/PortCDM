@@ -306,6 +306,10 @@ def combine_ship_and_berth_and_port_agent(rows):
                     row.update({'碼頭代號': ship_berth['berth_number']})
                 
                 row.update({'港代': ship_berth['port_agent']})
+        if '碼頭代號' not in row.keys():
+            row.update({'碼頭代號': '0000'})
+        if '港代' not in row.keys():
+            row.update({'港代': 'NO PORT AGENT'})
     
     return(rows)
 
