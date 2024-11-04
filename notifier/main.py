@@ -317,6 +317,7 @@ def combine_ship_and_berth_and_port_agent(rows):
 def main():
     interval_time = int(os.getenv('INTERVAL_TIME', 180))
 
+
     print(f'{(datetime.now() + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")} 查看資料庫有無更新')
     interval = interval_time + 1
     rows = []
