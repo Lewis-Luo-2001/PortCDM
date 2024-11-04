@@ -317,23 +317,22 @@ def combine_ship_and_berth_and_port_agent(rows):
 def main():
     interval_time = int(os.getenv('INTERVAL_TIME', 180))
 
-    while True:
-        print(f'{(datetime.now() + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")} 查看資料庫有無更新')
-        interval = interval_time + 1
-        rows = []
-        rows.extend(get_recent_ship_statuses(interval))
-        rows = combine_ship_and_berth_and_port_agent(rows)
-        rows.extend(get_berth_and_previous_pilotage_time_updated(interval))
-        for row in rows:
-            try:
-                if row['訊息格式'] == '接靠順序':
-                    send_notifications_for_berth_order(row, original_token)
-                else:
-                    send_notifications(row, line_notify_tokens, original_token)
-            except Exception as e:
-                print(f"Failed to send notification: {str(e)}")
 
-        time.sleep(interval_time)
+    print(f'{(datetime.now() + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")} 查看資料庫有無更新')
+    interval = interval_time + 1
+    rows = []
+    rows.extend(get_recent_ship_statuses(interval))
+    rows = combine_ship_and_berth_and_port_agent(rows)
+    rows.extend(get_berth_and_previous_pilotage_time_updated(interval))
+    for row in rows:
+        try:
+            if row['訊息格式'] == '接靠順序':
+                send_notifications_for_berth_order(row, original_token)
+            else:
+                send_notifications(row, line_notify_tokens, original_token)
+        except Exception as e:
+            print(f"Failed to send notification: {str(e)}")
+
 
 if __name__ == "__main__":
     main()
