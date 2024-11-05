@@ -39,7 +39,7 @@ def get_recent_ship_statuses(interval):
                 latest_event AS (
                     SELECT 
                         se.*,
-                        ROW_NUMBER() OVER (PARTITION BY se.ship_voyage_number ORDER BY se.event_time DESC) AS rn
+                        RANK() OVER (PARTITION BY se.ship_voyage_number ORDER BY se.event_time DESC) AS rk
                     FROM ship_events se
                 )
                 SELECT 
@@ -61,7 +61,7 @@ def get_recent_ship_statuses(interval):
                     AND eta.event_name = '修改進港預報' AND eta.rn = 1
                 LEFT JOIN ranked_events etd ON ss.ship_voyage_number = etd.ship_voyage_number 
                     AND etd.event_name = '修改出港預報' AND etd.rn = 1
-                LEFT JOIN latest_event le ON ss.ship_voyage_number = le.ship_voyage_number AND le.rn = 1
+                LEFT JOIN latest_event le ON ss.ship_voyage_number = le.ship_voyage_number AND le.rk = 1
                 LEFT JOIN ship_voyage sv ON ss.ship_voyage_number = sv.ship_voyage_number
                 WHERE ss.updated_at >= %s OR sv.updated_at >= %s
                 ORDER BY GREATEST(COALESCE(le.event_time, '1970-01-01'), COALESCE(sv.updated_at, '1970-01-01'))
