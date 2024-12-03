@@ -78,22 +78,18 @@ def fetch_ship_pass_5_and_10_miles(ship_df: pd.DataFrame, miles_pass_url: str, m
 if __name__ == '__main__':
     from config import url, ship_berth_order_url, event_url, miles_pass_url, output_html_path, output_csv_path, ship_content_id_prefix, cols, event_url, event_cols, miles_cols
 
-    interval_time = int(os.getenv('INTERVAL_TIME', 300))
+    print(f'{(datetime.now() + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")} 爬取網站資料')
 
-    while True:
-        print(f'{(datetime.now() + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")} 爬取網站資料')
+    try:
+        ship_df = fetch_ship_data(url, output_csv_path, output_html_path, ship_content_id_prefix, cols)
 
-        try:
-            ship_df = fetch_ship_data(url, output_csv_path, output_html_path, ship_content_id_prefix, cols)
+        fetch_ship_event_data(ship_df, event_url, event_cols)
 
-            fetch_ship_event_data(ship_df, event_url, event_cols)
+        fetch_ship_pass_5_and_10_miles(ship_df, miles_pass_url, miles_cols, output_csv_path)
 
-            fetch_ship_pass_5_and_10_miles(ship_df, miles_pass_url, miles_cols, output_csv_path)
+        fetch_ship_berth_order_data(ship_berth_order_url, output_csv_path)
 
-            fetch_ship_berth_order_data(ship_berth_order_url, output_csv_path)
+        print(f'{(datetime.now() + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")} 爬取資料完成')
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
 
-            print(f'{(datetime.now() + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")} 爬取資料完成')
-        except Exception as e:
-            print(f"An error occurred: {str(e)}")
-
-        time.sleep(interval_time)
