@@ -197,6 +197,12 @@ docker-compose down --volumes
 
 ```
 
+To check the container status:
+
+```
+docker-compose ps
+```
+
 ## Data Flow
 
 1. **Data Collection**
