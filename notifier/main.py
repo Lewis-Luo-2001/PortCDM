@@ -4,7 +4,9 @@ from datetime import datetime, timedelta
 import psycopg2
 import requests
 from psycopg2.extras import RealDictCursor
+
 from config import original_token, line_notify_tokens, notification_mapping, INOUT_PILOTAGE_EVENTS, BERTH_ORDER_EVENTS, berth_message_type_for_pier
+
 
 def send_line_notify(message, token):
     url = 'https://notify-api.line.me/api/notify'
@@ -237,10 +239,12 @@ ETD: {format_datetime(row['ETD'])}
 {format_datetime(row['更新時間']) if row['更新時間'] else "N/A"}"""
 
 def notification_filter(row, stakeholder) -> bool:
+
     boat_name = "永明" in row["船名"] or "文明" in row["船名"] or "好明" in row["船名"] or "續明" in row["船名"] or "吉春" in row["船名"] or "長春輪" in row["船名"] or "星春輪" in row["船名"] or "石春" in row["船名"] or "遠明" in row["船名"] or "昇春" in row["船名"]
     yang_ming_or_wan_hai = "陽明海運" in row["港代"] or "萬海航運公司" in row["港代"]
     pier_1042_1043 = row['碼頭代號'] in {'1042', '1043'}
     pier_1120_1121 = row['碼頭代號'] in {'1120', '1121'}
+
     stakeholder_conditions = {
         'Pilot': yang_ming_or_wan_hai or pier_1042_1043 or pier_1120_1121,
         'CIQS': yang_ming_or_wan_hai or pier_1042_1043 or pier_1120_1121,
@@ -319,7 +323,6 @@ def combine_ship_and_berth_and_port_agent(rows):
 def main():
     interval_time = int(os.getenv('INTERVAL_TIME', 180))
 
-
     print(f'{(datetime.now() + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")} 查看資料庫有無更新')
     interval = interval_time + 1
     rows = []
@@ -334,7 +337,6 @@ def main():
                 send_notifications(row, line_notify_tokens, original_token)
         except Exception as e:
             print(f"Failed to send notification: {str(e)}")
-
 
 if __name__ == "__main__":
     main()

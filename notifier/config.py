@@ -55,8 +55,8 @@ notification_mapping: Dict[str, List[str]] = {
     "引水人排班 (出港)": ["Pilot", "CIQS", "ShippingAgentWanHai"],
     "引水人出發 (出港)": ["Pilot", "CIQS", "ShippingCompanyYangMing", "ShippingAgentWanHai", "Unmooring", "Tugboat"],
     "引水人上船時間 (出港)": ["Pilot", "CIQS", "ShippingAgentWanHai"],
-    "離開泊地時間": ["ShippingAgent", "ShippingCompany", "Pilot", "Tugboat"]
-    # "通過15浬時間": ["ShippingAgent", "ShippingCompany", "Pilot", "Tugboat"],
-    # "通過10浬時間": ["Pilot", "Unmooring", "Tugboat", "ShippingAgentWanHai", "ShippingCompanyYangMing", "LoadingUnloading"],
-    # "通過5浬時間": ["Pilot", "Unmooring", "Tugboat", "ShippingAgentWanHai", "ShippingCompanyYangMing", "LoadingUnloading"]
+    "離開泊地時間": ["ShippingAgent", "ShippingCompany", "Pilot", "Tugboat"],
+    "通過15浬時間": ["ShippingAgent", "ShippingCompany", "Pilot", "Tugboat"],
+    "通過10浬時間": ["Pilot", "Unmooring", "Tugboat", "ShippingAgentWanHai", "ShippingCompanyYangMing", "LoadingUnloading"],
+    "通過5浬時間": ["Pilot", "Unmooring", "Tugboat", "ShippingAgentWanHai", "ShippingCompanyYangMing", "LoadingUnloading"]
 }
